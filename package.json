@@ -15,10 +15,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-<<<<<<< HEAD
-=======
     "mongoose": "^5.11.13",
->>>>>>> be00902c5aea74ced5a0bf2b38b042f43ff6aff7
     "nodemon": "^2.0.7"
   },
   "devDependencies": {

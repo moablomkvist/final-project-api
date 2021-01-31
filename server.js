@@ -8,7 +8,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 mongoose.set("useCreateIndex", true);
 
-const User = moongoose.model("User", {
+const User = mongoose.model("User", {
   name: {
     type: String,
     unique: true,
