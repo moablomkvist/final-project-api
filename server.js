@@ -28,6 +28,19 @@ const User = mongoose.model("User", {
   },
 });
 
+const Comment = mongoose.model("Comment", {
+  body: String,
+  date: Date, 
+  userid: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"User"
+  },
+  patternid: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pattern", ////Prepared for comments: connected users and patterns///
+  }
+})
+
 const Pattern = mongoose.model("Pattern", {
   post: {
     type: String,
@@ -52,13 +65,14 @@ const Pattern = mongoose.model("Pattern", {
     type: Number,
     default: 0,
   },
-  comments: [
-    {
-      body: String,
-      date: Date, //add user id (check out Maks Technigo members and roles)
-    },
-  ],
+  
 });
+
+const comments = new Pattern ({
+  comments: "",
+});
+comments.save()
+
 
 //Seed database
 if (process.env.RESET_DATABASE) {
@@ -69,10 +83,9 @@ if (process.env.RESET_DATABASE) {
 
     const oslohuen = new Pattern({
       post: "Oslohuen",
-      source:
-        "https://www.petiteknit.com/products/oslohuen?variant=12540116533303",
+      source: "https://www.petiteknit.com/products/oslohuen?variant=12540116533303",
       needles: 3.5,
-      yarn: "Filocana",
+      yarn: "Filcolana",
     });
     await oslohuen.save();
   };
@@ -94,9 +107,7 @@ const authenticateUser = async (req, res, next) => {
       req.res = user;
       next();
     } else {
-      res
-      .status(401)
-      .json({ loggedOut: true, message: "Try to log in again" });
+      res.status(401).json({ loggedOut: true, message: "Try to log in again" });
     }
   } catch (err) {
     res
@@ -118,20 +129,16 @@ app.post("/users", async (req, res) => {
     const SALT = bcrypt.genSaltSync(10);
     const user = new User({ name, password: bcrypt.hashSync(password, SALT) });
     const saved = await user.save();
-    res
-      .status(201)
-      .json({
-        id: saved._id,
-        accessToken: saved.accessToken,
-        message: "Your profile has been created successfully!",
-      });
+    res.status(201).json({
+      id: saved._id,
+      accessToken: saved.accessToken,
+      message: "Your profile has been created successfully!",
+    });
   } catch (err) {
-    res
-      .status(400)
-      .json({
-        message: "Could not create user / User already exist",
-        error: err.error,
-      });
+    res.status(400).json({
+      message: "Could not create user / User already exist",
+      error: err.error,
+    });
   }
 });
 
@@ -144,12 +151,12 @@ app.post("/sessions", async (req, res) => {
     } else {
       res
         .status(400)
-        .json({ message: "Wrong email or password", error: err.error });
+        .json({ message: "Wrong username or password", error: err.error });
     }
   } catch (err) {
     res
       .status(400)
-      .json({ message: "Wrong email or password", error: err.error });
+      .json({ message: "Wrong username or password", error: err.error });
   }
 });
 
@@ -173,6 +180,11 @@ app.get("/patterns", async (req, res) => {
   }
 });
 
+app.get("/patterns/:patternid/comments", async (req, res) => {
+  const { patternid } = req.params
+  const commentsforpattern = await Comment.find({patternid})
+})
+
 app.post("/patterns", async (req, res) => {
   const { post, source, needles, yarn, createdAt, likes, comments } = req.body;
   const pattern = new Pattern({
@@ -194,6 +206,12 @@ app.post("/patterns", async (req, res) => {
       error: err.errors,
     });
   }
+});
+
+////Prepared for comments: connected users and patterns///
+app.get("/patterns/comments", async (req, res) => {
+  const comments = await Pattern.find().populate("user");
+  res.json(comments);
 });
 
 app.listen(port, () => {
