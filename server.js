@@ -111,52 +111,41 @@ app.get("/", (req, res) => {
 
 ///////////ENDPOINTS FOR USERS///////////////
 
-// Sign-up endpoint
+// Endpoint that creates a new user
 app.post("/users", async (req, res) => {
   try {
     const { name, password } = req.body;
-    const SALT = bcrypt.genSaltSync(10);
-    const user = new User({ name, password: bcrypt.hashSync(password, SALT) });
-    const saved = await user.save();
-    res
-      .status(201)
-      .json({
-        id: saved._id,
-        accessToken: saved.accessToken,
-        message: "Your profile has been created successfully!",
-      });
+    const salt = bcrypt.genSaltSync(10);
+    const user = await new User({
+      name,
+      password: bcrypt.hashSync(password, salt),
+    }).save();
+    res.status(201).json({ userId: user._id, accessToken: user.accessToken });
   } catch (err) {
-    res
-      .status(400)
-      .json({
-        message: "Could not create user / User already exist",
-        error: err.error,
-      });
+    res.status(400).json({ message: "Could not create user", errors: err });
   }
 });
 
-// Sign-in endpoint
+// Endpoint that login the user
 app.post("/sessions", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.body.name });
-    if (user && bcrypt.compareSync(req.body.password, user.password)) {
-      res.status(201).json({ userId: user._id, accessToken: user.accessToken });
+    const { name, password } = req.body;
+    const user = await User.findOne({ name });
+    if (user && bcrypt.compareSync(password, user.password)) {
+      res.status(200).json({ userId: user._id, accessToken: user.accessToken });
     } else {
-      res
-        .status(400)
-        .json({ message: "Wrong email or password", error: err.error });
+      res.status(404).json({ notFound: true });
     }
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Wrong email or password", error: err.error });
+    res.status(404).json({ message: "Could not log in user", errors: err });
   }
 });
 
-// Authenticated endpoint
-app.get("/secrets", authenticateUser);
-app.get("/secrets", (req, res) => {
-  res.json({ secret: "Success! You are logged in." });
+// Endpoint that shows a page to the user when logged in
+app.get("/welcome", authenticateUser);
+app.get("/welcome", (req, res) => {
+  const welcomeMessage = `Hi ${req.user.name}! Nice to see you here.`;
+  res.status(201).json({ welcomeMessage });
 });
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
