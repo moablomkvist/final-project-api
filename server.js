@@ -142,10 +142,15 @@ app.post("/sessions", async (req, res) => {
   }
 });
 
+// specific information for the user
+app.get('users/:id', async (req, res) => {
+  res.status(501).send();
+})
+
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
 // Authenticated endpoint
-app.get("/patterns", authenticateUser);
+//app.get("/patterns", authenticateUser);
 app.get("/patterns", async (req, res) => {
   try {
     const patterns = await Pattern.find()
