@@ -44,15 +44,17 @@ const Comment = mongoose.model("Comment", {
 const Pattern = mongoose.model("Pattern", {
   post: {
     type: String,
-    difficulty: Number,
-    //required: true, //consider a maxlength to controll the size of feed.
+    difficulty: Number
   },
   source: {
     type: String,
     //required: true, ///Fråga till MAKS
   },
+  imageSource:{
+    type: String
+  },
   needles: {
-    type: Number,
+    type: String,
   },
   yarn: {
     type: String,
@@ -168,10 +170,11 @@ app.get("/patterns/:patternid/comments", async (req, res) => {
 })
 
 app.post("/patterns", async (req, res) => {
-  const { post, source, needles, yarn, createdAt, likes, comments } = req.body;
+  const { post, source, imageSource, needles, yarn, createdAt, likes, comments } = req.body;
   const pattern = new Pattern({
     post: post,
     source: source,
+    imageSource: imageSource,
     needles: needles,
     yarn: yarn,
     createdAt: createdAt,
