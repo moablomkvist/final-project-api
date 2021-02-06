@@ -45,11 +45,11 @@ const Pattern = mongoose.model("Pattern", {
   post: {
     type: String,
     difficulty: Number,
-    required: true, //consider a maxlength to controll the size of feed.
+    //required: true, //consider a maxlength to controll the size of feed.
   },
   source: {
     type: String,
-    required: true,
+    //required: true, ///Fråga till MAKS
   },
   needles: {
     type: Number,
@@ -73,25 +73,7 @@ const comments = new Pattern ({
 comments.save()
 
 
-//Seed database
-if (process.env.RESET_DATABASE) {
-  console.log("resetting database!");
-
-  const seedDatabase = async () => {
-    await Pattern.deleteMany();
-
-    const oslohuen = new Pattern({
-      post: "Oslohuen",
-      source: "https://www.petiteknit.com/products/oslohuen?variant=12540116533303",
-      needles: 3.5,
-      yarn: "Filcolana",
-    });
-    await oslohuen.save();
-  };
-  seedDatabase();
-}
-
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 const app = express();
 
 app.use(cors());
@@ -160,15 +142,14 @@ app.post("/sessions", async (req, res) => {
   }
 });
 
-// Endpoint that shows a page to the user when logged in
-app.get("/welcome", authenticateUser);
-app.get("/welcome", (req, res) => {
-  const welcomeMessage = `Hi ${req.user.name}! Nice to see you here.`;
-  res.status(201).json({ welcomeMessage });
-});
+// specific information for the user
+app.get('users/:id', async (req, res) => {
+  res.status(501).send();
+})
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
-
+// Authenticated endpoint
+//app.get("/patterns", authenticateUser);
 app.get("/patterns", async (req, res) => {
   try {
     const patterns = await Pattern.find()
@@ -209,11 +190,11 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
-////Prepared for comments: connected users and patterns///
-app.get("/patterns/comments", async (req, res) => {
-  const comments = await Pattern.find().populate("user");
-  res.json(comments);
-});
+///Prepared for comments: connected users and patterns///
+//app.get("/patterns/comments", async (req, res) => {
+  //const comments = await Pattern.find().populate("user");
+  //res.json(comments);
+//});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
