@@ -193,6 +193,16 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
+app.delete("/patterns/:patternid/delete", async (req, res) => { //deletes a pattern
+  try {
+    await Pattern.deleteOne({ _id: req.params._id });
+    res.status(200).json({ sucess: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false });
+  }
+});
+
 ///Prepared for comments: connected users and patterns///
 //app.get("/patterns/comments", async (req, res) => {
   //const comments = await Pattern.find().populate("user");
