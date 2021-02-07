@@ -270,6 +270,7 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 
 
 // app.delete("/patterns/:patternid/delete", async (req, res) => { //deletes a pattern
@@ -281,6 +282,17 @@ app.post("/patterns", async (req, res) => {
 //     res.status(400).json({ success: false });
 //   }
 // });
+=======
+app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
+  try {
+    await Pattern.deleteOne({ _id: req.params.patternid });
+    res.status(200).json({ sucess: true });
+} catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false });
+  }
+});
+>>>>>>> 79caf52653b6a49faf0201c8069266f829960b03
 
 ///Prepared for comments: connected users and patterns///
 //app.get("/patterns/comments", async (req, res) => {
