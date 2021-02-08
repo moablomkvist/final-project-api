@@ -240,7 +240,6 @@ app.get("/patterns", async (req, res) => {
   }
 });
 
-
 //Comments
 app.get("/patterns/:patternid/comments", async (req, res) => {
   const { patternid } = req.params
