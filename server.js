@@ -61,10 +61,11 @@ const Pattern = mongoose.model("Pattern", {
   },
   source: {
     type: String,
-    //required: true, ///Fråga till MAKS
+    required: true
   },
   imageSource:{
-    type: String
+    type: String,
+    required: true
   },
   needles: {
     type: String
@@ -82,15 +83,15 @@ const Pattern = mongoose.model("Pattern", {
   }
 });
 
-const comments = new Pattern ({
-  comments: "",
-});
-comments.save()
+//const comments = new Pattern ({
+ // comments: "",
+//});
+//comments.save()
 
-const favourite = new Pattern ({
-  favourite: "",
-});
-favourite.save()
+// const favourite = new Pattern ({
+//   favourite: "",
+// });
+// favourite.save()
 
 const port = process.env.PORT || 8081;
 const app = express();
@@ -270,19 +271,6 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-
-
-// app.delete("/patterns/:patternid/delete", async (req, res) => { //deletes a pattern
-//   try {
-//     await Pattern.deleteOne({ _id: req.params._id });
-//     res.status(200).json({ sucess: true });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ success: false });
-//   }
-// });
-=======
 app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
   try {
     await Pattern.deleteOne({ _id: req.params.patternid });
@@ -292,7 +280,6 @@ app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
     res.status(400).json({ success: false });
   }
 });
->>>>>>> 79caf52653b6a49faf0201c8069266f829960b03
 
 ///Prepared for comments: connected users and patterns///
 //app.get("/patterns/comments", async (req, res) => {
