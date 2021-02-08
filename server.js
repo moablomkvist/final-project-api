@@ -83,15 +83,15 @@ const Pattern = mongoose.model("Pattern", {
   }
 });
 
-const comments = new Pattern ({
-  comments: "",
-});
-comments.save()
+// const comments = new Pattern ({
+//   comments: "",
+// });
+// comments.save()
 
-const favourite = new Pattern ({
-  favourite: "",
-});
-favourite.save()
+// const favourite = new Pattern ({
+//   favourite: "",
+// });
+// favourite.save()
 
 const port = process.env.PORT || 8081;
 const app = express();
