@@ -61,11 +61,19 @@ const Pattern = mongoose.model("Pattern", {
   },
   source: {
     type: String,
+<<<<<<< HEAD
     required: true
   },
   imageSource:{
     type: String,
     required: true
+=======
+    required: true,
+  },
+  imageSource:{
+    type: String,
+    required: true,
+>>>>>>> a69c9cad04fb998656e9d9d6ca7f04322ca44648
   },
   needles: {
     type: String
@@ -186,7 +194,7 @@ app.put("/users/:userId/favorites/:patternId", async (req, res) => {
     });
   }
 });
-//delete a patternfrom favourites
+//delete a pattern from favourites
 app.delete("/users/:userId/favorites/:patternId", async (req, res) => {
   const { userId, patternId } = req.params;
   try {
@@ -215,7 +223,7 @@ app.get("/users/:id/favorites", async (req, res) => {
     const userFavoritesArray = await req.user.favoritePatterns; //--> shows array of added pattern (pattern-id:s)
     const getCurrentFavoritePatterns = await Pattern.find({
       _id: userFavoritesArray,
-    }); // --> outputs the whole video-object in user favorites!
+    }); // --> outputs the whole pattern-object in user favorites!
     res.status(200).json(getCurrentFavoritePatterns);
   } catch (err) {
     res.status(403).json({
@@ -246,6 +254,7 @@ app.get("/patterns/:patternid/comments", async (req, res) => {
   const commentsforpattern = await Comment.find({patternid})
 })
 
+//Post Patterns
 app.post("/patterns", async (req, res) => {
   const { post, source, imageSource, needles, yarn, createdAt, likes, comments, favourite } = req.body;
   const pattern = new Pattern({
@@ -260,15 +269,27 @@ app.post("/patterns", async (req, res) => {
     favourite: favourite,
   });
   try {
+    console.log(req.body)
     const savedPattern = await pattern.save();
     res.status(201).json(savedPattern);
   } catch (err) {
     res.status(400).json({
       message: "Could not post your pattern",
-      error: err.errors,
+      errors: { message: err.message, error: err },
     });
   }
 });
+
+
+// app.delete("/patterns/:patternid/delete", async (req, res) => { //deletes a pattern
+//   try {
+//     await Pattern.deleteOne({ _id: req.params._id });
+//     res.status(200).json({ sucess: true });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).json({ success: false });
+//   }
+// });
 
 app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
   try {
