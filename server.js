@@ -273,7 +273,7 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
-app.delete("/patterns/:patternId", authenticateUser);
+app.delete('/patterns/:patternId', authenticateUser);
 app.delete("/patterns/:patternId", async (req, res) => { //deletes a pattern
   try {
     await Pattern.deleteOne({ _id: req.params.patternId });
