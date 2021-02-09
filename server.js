@@ -61,19 +61,11 @@ const Pattern = mongoose.model("Pattern", {
   },
   source: {
     type: String,
-<<<<<<< HEAD
-    required: true
-  },
-  imageSource:{
-    type: String,
-    required: true
-=======
     required: true,
   },
   imageSource:{
     type: String,
     required: true,
->>>>>>> a69c9cad04fb998656e9d9d6ca7f04322ca44648
   },
   needles: {
     type: String
@@ -194,6 +186,7 @@ app.put("/users/:userId/favorites/:patternId", async (req, res) => {
     });
   }
 });
+
 //delete a pattern from favourites
 app.delete("/users/:userId/favorites/:patternId", async (req, res) => {
   const { userId, patternId } = req.params;
@@ -248,11 +241,11 @@ app.get("/patterns", async (req, res) => {
   }
 });
 
-//Comments
-app.get("/patterns/:patternid/comments", async (req, res) => {
-  const { patternid } = req.params
-  const commentsforpattern = await Comment.find({patternid})
-})
+// //Comments
+// app.get("/patterns/:patternid/comments", async (req, res) => {
+//   const { patternid } = req.params
+//   const commentsforpattern = await Comment.find({patternid})
+// })
 
 //Post Patterns
 app.post("/patterns", async (req, res) => {
@@ -280,24 +273,14 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
-
-// app.delete("/patterns/:patternid/delete", async (req, res) => { //deletes a pattern
-//   try {
-//     await Pattern.deleteOne({ _id: req.params._id });
-//     res.status(200).json({ sucess: true });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ success: false });
-//   }
-// });
-
-app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
+app.delete("/patterns/:patternId", authenticateUser);
+app.delete("/patterns/:patternId", async (req, res) => { //deletes a pattern
   try {
-    await Pattern.deleteOne({ _id: req.params.patternid });
+    await Pattern.deleteOne({ _id: req.params.patternId });
     res.status(200).json({ sucess: true });
 } catch (error) {
     console.log(error);
-    res.status(400).json({ success: false });
+    res.status(400).json({ message: 'Could not delete pattern' });
   }
 });
 
