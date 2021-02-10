@@ -42,17 +42,17 @@ const Comment = mongoose.model("Comment", {
   }
 })
 
-const Favourite = mongoose.model("Favourite", {
-  body: String,
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref:"User"
-  },
-  patternId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Pattern", ////Prepared for favourite: connected users and patterns///
-  }
-})
+//const Favourite = mongoose.model("Favourite", {
+  //body: String,
+  //userId: {
+    //type: mongoose.Schema.Types.ObjectId,
+    //ref:"User"
+  //},
+  //patternId: {
+    //type: mongoose.Schema.Types.ObjectId,
+    //ref: "Pattern", ////Prepared for favourite: connected users and patterns///
+  //}
+//})
 
 const Pattern = mongoose.model("Pattern", {
   post: {
@@ -83,15 +83,7 @@ const Pattern = mongoose.model("Pattern", {
   }
 });
 
-// const comments = new Pattern ({
-//   comments: "",
-// });
-// comments.save()
 
-// const favourite = new Pattern ({
-//   favourite: "",
-// });
-// favourite.save()
 
 const port = process.env.PORT || 8081;
 const app = express();
@@ -113,7 +105,7 @@ const authenticateUser = async (req, res, next) => {
   } catch (err) {
     res
       .status(403)
-      .json({ message: "Acess token is missing or not valid", errors: err });
+      .json({ message: "Acesstoken is missing or not valid", errors: err });
   }
 };
 
@@ -144,6 +136,7 @@ app.post("/users", async (req, res) => {
 });
 
 // Endpoint that login the user
+
 app.post("/sessions", async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -168,62 +161,62 @@ app.get('users/:id', async (req, res) => {
 })
 
 // Users favourite pattern
-app.put("/users/:userId/favorites/:patternId", async (req, res) => {
-  const { userId, patternid } = req.params;
-  try {
-    const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
-    console.log("markedPattern", markedPattern);
-    await User.updateOne(
-      { _id: userId },
-      { $push: { markedPattern: markedPattern } } //push the selected pattern into the favorite patterns array
-    );
-    //console.log("")
-    res.status(200).json(markedPattern);
-  } catch (err) {
-    res.status(404).json({
-      message: "Could not add pattern.",
-      errors: { message: err.message, error: err },
-    });
-  }
-});
+// app.put("/users/:userId/favorites/:patternId", async (req, res) => {
+//   const { userId, patternid } = req.params;
+//   try {
+//     const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
+//     console.log("markedPattern", markedPattern);
+//     await User.updateOne(
+//       { _id: userId },
+//       { $push: { markedPattern: markedPattern } } //push the selected pattern into the favorite patterns array
+//     );
+//     //console.log("")
+//     res.status(200).json(markedPattern);
+//   } catch (err) {
+//     res.status(404).json({
+//       message: "Could not add pattern.",
+//       errors: { message: err.message, error: err },
+//     });
+//   }
+// });
 //delete a pattern from favourites
-app.delete("/users/:userId/favorites/:patternId", async (req, res) => {
-  const { userId, patternId } = req.params;
-  try {
-    const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
-    console.log("markedPattern", markedPattern);
-    await User.deleteOne(
-      { _id: userId },
-      { $pull: { markedPattern: markedPattern } } //push the selected video into the favorite videos array
-    );
-    //console.log("")
-    res.status(200).json(markedPattern);
-  } catch (err) {
-    res.status(404).json({
-      message: "Could not remove video.",
-      errors: { message: err.message, error: err },
-    });
-  }
-});
+// app.delete("/users/:userId/favorites/:patternId", async (req, res) => {
+//   const { userId, patternId } = req.params;
+//   try {
+//     const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
+//     console.log("markedPattern", markedPattern);
+//     await User.deleteOne(
+//       { _id: userId },
+//       { $pull: { markedPattern: markedPattern } } //push the selected video into the favorite videos array
+//     );
+//     //console.log("")
+//     res.status(200).json(markedPattern);
+//   } catch (err) {
+//     res.status(404).json({
+//       message: "Could not remove video.",
+//       errors: { message: err.message, error: err },
+//     });
+//   }
+// });
 
-app.get("/users/:id/favorites", async (req, res) => {
-  try {
-    const userId = req.params.id;
-    if (userId != req.user._id) {
-      throw "Access denied";
-    }
-    const userFavoritesArray = await req.user.favoritePatterns; //--> shows array of added pattern (pattern-id:s)
-    const getCurrentFavoritePatterns = await Pattern.find({
-      _id: userFavoritesArray,
-    }); // --> outputs the whole pattern-object in user favorites!
-    res.status(200).json(getCurrentFavoritePatterns);
-  } catch (err) {
-    res.status(403).json({
-      message: "Could not get favorite patterns. User must be logged in.",
-      errors: { message: err.message, error: err },
-    });
-  }
-});
+// app.get("/users/:id/favorites", async (req, res) => {
+//   try {
+//     const userId = req.params.id;
+//     if (userId != req.user._id) {
+//       throw "Access denied";
+//     }
+//     const userFavoritesArray = await req.user.favoritePatterns; //--> shows array of added pattern (pattern-id:s)
+//     const getCurrentFavoritePatterns = await Pattern.find({
+//       _id: userFavoritesArray,
+//     }); // --> outputs the whole pattern-object in user favorites!
+//     res.status(200).json(getCurrentFavoritePatterns);
+//   } catch (err) {
+//     res.status(403).json({
+//       message: "Could not get favorite patterns. User must be logged in.",
+//       errors: { message: err.message, error: err },
+//     });
+//   }
+// });
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
 // Authenticated endpoint
@@ -240,14 +233,14 @@ app.get("/patterns", async (req, res) => {
   }
 });
 
-
 //Comments
-app.get("/patterns/:patternid/comments", async (req, res) => {
-  const { patternid } = req.params
-  const commentsforpattern = await Comment.find({patternid})
-})
+// app.get("/patterns/:patternid/comments", async (req, res) => {
+//   const { patternid } = req.params
+//   const commentsforpattern = await Comment.find({patternid})
+// })
 
 //Post Patterns
+//app.get("/patterns", authenticateUser);
 app.post("/patterns", async (req, res) => {
   const { post, source, imageSource, needles, yarn, createdAt, likes, comments, favourite } = req.body;
   const pattern = new Pattern({
@@ -262,7 +255,6 @@ app.post("/patterns", async (req, res) => {
     favourite: favourite,
   });
   try {
-    console.log(req.body)
     const savedPattern = await pattern.save();
     res.status(201).json(savedPattern);
   } catch (err) {
@@ -293,7 +285,6 @@ app.delete("/patterns/:patternid", async (req, res) => { //deletes a pattern
     res.status(400).json({ success: false });
   }
 });
-
 
 ///Prepared for comments: connected users and patterns///
 //app.get("/patterns/comments", async (req, res) => {
