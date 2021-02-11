@@ -149,6 +149,7 @@ app.get("/patterns", async (req, res) => {
 });
 
 //Post Patterns
+app.post("/patterns", authenticateUser);
 app.post("/patterns", async (req, res) => {
   const { post, source, imageSource, needles, yarn, createdAt, likes, comments } = req.body;
   const pattern = new Pattern({
