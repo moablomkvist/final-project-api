@@ -71,7 +71,7 @@ const authenticateUser = async (req, res, next) => {
       accessToken: req.header("Authorization"),
     });
     if (user) {
-      req.res = user;
+      req.user = user;
       next();
     } else {
       res.status(401).json({ loggedOut: true, message: "Try to log in again" });
@@ -151,7 +151,7 @@ app.get("/patterns", async (req, res) => {
 //Post Patterns
 app.post("/patterns", authenticateUser);
 app.post("/patterns", async (req, res) => {
-  const { post, source, imageSource, needles, yarn, createdAt, likes, comments } = req.body;
+  const { post, source, imageSource, needles, yarn, createdAt } = req.body;
   const pattern = new Pattern({
     post: post,
     source: source,
@@ -159,8 +159,6 @@ app.post("/patterns", async (req, res) => {
     needles: needles,
     yarn: yarn,
     createdAt: createdAt,
-    likes: likes,
-    comments: comments,
     favourite: favourite,
     userId: req.user._id
   });
