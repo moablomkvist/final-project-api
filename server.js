@@ -125,7 +125,7 @@ const authenticateUser = async (req, res, next) => {
   } catch (err) {
     res
       .status(403)
-      .json({ message: "Acess token is missing or not valid", errors: err });
+      .json({ message: "Acesstoken is missing or not valid", errors: err });
   }
 };
 
@@ -156,6 +156,7 @@ app.post("/users", async (req, res) => {
 });
 
 // Endpoint that login the user
+
 app.post("/sessions", async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -175,72 +176,42 @@ app.post("/sessions", async (req, res) => {
 });
 
 // specific information for the user
-app.get('users/:id', async (req, res) => {
-  res.status(501).send();
-})
+// app.get('users/:id', async (req, res) => {
+//   res.status(501).send();
+// })
 
-// Users favourite pattern
-app.put("/users/:userId/favorites/:patternId", async (req, res) => {
-  const { userId, patternid } = req.params;
-  try {
-    const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
-    console.log("markedPattern", markedPattern);
-    await User.updateOne(
-      { _id: userId },
-      { $push: { markedPattern: markedPattern } } //push the selected pattern into the favorite patterns array
-    );
-    //console.log("")
-    res.status(200).json(markedPattern);
-  } catch (err) {
-    res.status(404).json({
-      message: "Could not add pattern.",
-      errors: { message: err.message, error: err },
-    });
+app.get("/patterns/:id", async (req, res) => {
+  const patternId = await Pattern.findOne({ _id: req.params.id });
+  if (patternId) {
+    res.json(patternId);
+  } else {
+    res.status(404).json({ error: "Pattern not found" });
   }
 });
 
-//delete a pattern from favourites
-app.delete("/users/:userId/favorites/:patternId", async (req, res) => {
-  const { userId, patternId } = req.params;
-  try {
-    const markedPattern = await Pattern.findById(patternId); // Find the pattern the user wants to add.
-    console.log("markedPattern", markedPattern);
-    await User.deleteOne(
-      { _id: userId },
-      { $pull: { markedPattern: markedPattern } } //push the selected video into the favorite videos array
-    );
-    //console.log("")
-    res.status(200).json(markedPattern);
-  } catch (err) {
-    res.status(404).json({
-      message: "Could not remove video.",
-      errors: { message: err.message, error: err },
-    });
-  }
-});
+// // app.get("users/:userId/favourites/:patternId", authenticateUser);
+// app.get("users/:userId/favourites/:patternId", async (req, res) => {
+//   try {
+//     const userId = req.params._id;
+//     if (userId != req.user._id) {
+//       throw "Access denied";
+//     }
+//     const favouritesArray = await req.user.selectedPatterns; //array of added patterns (pattern-id:s)
+//     const getCurrentFavouritePatterns = await Pattern.find({
+//       userId: favouritesArray,
+//     }); // gives the  pattern-object in user favourites
+//     res.status(200).json(getCurrentFavouritePatterns);
+//   } catch (err) {
+//     res.status(403).json({
+//       message: "Could not get favourite pattern. User must be logged in.",
+//       errors: { message: err.message, error: err },
+//     });
+//   }
+// });
 
-app.get("/users/:id/favorites", async (req, res) => {
-  try {
-    const userId = req.params.id;
-    if (userId != req.user._id) {
-      throw "Access denied";
-    }
-    const userFavoritesArray = await req.user.favoritePatterns; //--> shows array of added pattern (pattern-id:s)
-    const getCurrentFavoritePatterns = await Pattern.find({
-      _id: userFavoritesArray,
-    }); // --> outputs the whole pattern-object in user favorites!
-    res.status(200).json(getCurrentFavoritePatterns);
-  } catch (err) {
-    res.status(403).json({
-      message: "Could not get favorite patterns. User must be logged in.",
-      errors: { message: err.message, error: err },
-    });
-  }
-});
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
-// Authenticated endpoint
-//app.get("/patterns", authenticateUser);
+
 app.get("/patterns", async (req, res) => {
   try {
     const patterns = await Pattern.find()
@@ -268,7 +239,6 @@ app.post("/patterns", async (req, res) => {
     favourite: favourite,
   });
   try {
-    console.log(req.body)
     const savedPattern = await pattern.save();
     res.status(201).json(savedPattern);
   } catch (err) {
