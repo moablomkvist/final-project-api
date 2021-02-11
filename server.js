@@ -159,7 +159,6 @@ app.post("/patterns", async (req, res) => {
     needles: needles,
     yarn: yarn,
     createdAt: createdAt,
-    favourite: favourite,
     userId: req.user._id
   });
   try {
