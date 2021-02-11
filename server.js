@@ -136,7 +136,6 @@ app.get('users/:id', async (req, res) => {
 ///////////ENDPOINTS FOR PATTERNS///////////////
 // Authenticated endpoint
 
-app.get('/patterns/:patternId', authenticateUser);
 app.get("/patterns", async (req, res) => {
   try {
     const patterns = await Pattern.find()
@@ -150,7 +149,6 @@ app.get("/patterns", async (req, res) => {
 });
 
 //Post Patterns
-app.post("/patterns", authenticateUser);
 app.post("/patterns", async (req, res) => {
   const { post, source, imageSource, needles, yarn, createdAt, likes, comments } = req.body;
   const pattern = new Pattern({
