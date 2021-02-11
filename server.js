@@ -113,11 +113,13 @@ app.use(bodyParser.json());
 
 const authenticateUser = async (req, res, next) => {
   try {
+    console.log(req.header("Authorization"))
     const user = await User.findOne({
       accessToken: req.header("Authorization"),
     });
+    console.log(user)
     if (user) {
-      req.res = user;
+      req.user = user;
       next();
     } else {
       res.status(401).json({ loggedOut: true, message: "Try to log in again" });
@@ -125,7 +127,7 @@ const authenticateUser = async (req, res, next) => {
   } catch (err) {
     res
       .status(403)
-      .json({ message: "Acesstoken is missing or not valid", errors: err });
+      .json({ message: "Acess token is missing or not valid", errors: err });
   }
 };
 
