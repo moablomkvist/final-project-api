@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
-const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/knitting-circle";
+const mongoUrl = process.env.MONGO_URL || "mongodb+srv://dbMoa:ZoTkTzd2yI3wYxjE@cluster0.5lfwq.mongodb.net/knittingCircle?retryWrites=true&w=majority";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 mongoose.set("useCreateIndex", true);
@@ -81,7 +81,7 @@ const Pattern = mongoose.model("Pattern", {
   likes: {
     type: Number,
     default: 0
-  }
+  },
 });
 
 
@@ -213,7 +213,7 @@ app.get("/patterns", async (req, res) => {
 
 //Post Patterns
 app.post("/patterns", async (req, res) => {
-  const { post, source, imageSource, needles, yarn, createdAt, likes, comments, favourite } = req.body;
+  const { post, source, imageSource, needles, yarn, createdAt, likes, comments } = req.body;
   const pattern = new Pattern({
     post: post,
     source: source,
@@ -223,7 +223,6 @@ app.post("/patterns", async (req, res) => {
     createdAt: createdAt,
     likes: likes,
     comments: comments,
-    favourite: favourite,
   });
   try {
     const savedPattern = await pattern.save();
