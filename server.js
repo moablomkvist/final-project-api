@@ -5,7 +5,9 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
-const mongoUrl = process.env.MONGO_URL || "mongodb+srv://dbMoa:ZoTkTzd2yI3wYxjE@cluster0.5lfwq.mongodb.net/knittingCircle?retryWrites=true&w=majority";
+const mongoUrl =
+  process.env.MONGO_URL ||
+  "mongodb+srv://dbMoa:ZoTkTzd2yI3wYxjE@cluster0.5lfwq.mongodb.net/knittingCircle?retryWrites=true&w=majority";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 mongoose.set("useCreateIndex", true);
@@ -26,37 +28,37 @@ const User = mongoose.model("User", {
   accessToken: {
     type: String,
     default: () => crypto.randomBytes(128).toString("hex"),
-  }
+  },
 });
 
 //PatternSchema, "posts",
-const Pattern = mongoose.model("Pattern",  {
+const Pattern = mongoose.model("Pattern", {
   post: {
     type: String,
-    difficulty: Number
+    difficulty: Number,
   },
   source: {
     type: String,
     required: true,
   },
-  imageSource:{
+  imageSource: {
     type: String,
     required: true,
   },
   needles: {
-    type: String
+    type: String,
   },
   yarn: {
-    type: String
+    type: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:"User"
-  }
+    ref: "User",
+  },
 });
 
 const port = process.env.PORT || 8081;
@@ -129,9 +131,9 @@ app.post("/sessions", async (req, res) => {
 });
 
 // specific information for the user
-app.get('users/:id', async (req, res) => {
+app.get("users/:id", async (req, res) => {
   res.status(501).send();
-})
+});
 
 ///////////ENDPOINTS FOR PATTERNS///////////////
 // Authenticated endpoint
@@ -159,10 +161,10 @@ app.post("/patterns", async (req, res) => {
     needles: needles,
     yarn: yarn,
     createdAt: createdAt,
-    userId: req.user._id
+    userId: req.user._id,
   });
   try {
-    console.log(req.body)
+    console.log(req.body);
     const savedPattern = await pattern.save();
     res.status(201).json(savedPattern);
   } catch (err) {
@@ -173,23 +175,19 @@ app.post("/patterns", async (req, res) => {
   }
 });
 
-app.delete('/patterns/:patternId', authenticateUser);
+app.delete("/patterns/:patternId", authenticateUser);
 app.delete("/patterns/:patternId", async (req, res) => {
   try {
-    const pattern = await Pattern.findById(req.params.patternId)
-    console.log(req.user._id)
-    console.log(pattern.userId.equals(req.user._id))
+    const pattern = await Pattern.findById(req.params.patternId);
     if (pattern.userId.equals(req.user._id)) {
-      console.log('success')
       await Pattern.deleteOne({ _id: req.params.patternId });
       res.status(200).json({ sucess: true });
     }
-} catch (error) {
+  } catch (error) {
     console.log(error);
-    res.status(400).json({ message: 'Could not delete pattern' });
+    res.status(400).json({ message: "Could not delete pattern" });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
